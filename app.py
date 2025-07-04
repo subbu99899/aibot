@@ -3,6 +3,7 @@ import nltk
 import random
 import string
 from nltk.stem import WordNetLemmatizer
+import os
 
 nltk.download('punkt')
 nltk.download('wordnet')
@@ -76,4 +77,5 @@ def get_bot_response():
     return jsonify({"response": response})
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
