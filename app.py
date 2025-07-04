@@ -2,9 +2,11 @@ from flask import Flask, render_template, request, jsonify
 import nltk
 import random
 import string
-from nltk.stem import WordNetLemmatizer
 import os
+from nltk.stem import WordNetLemmatizer
 
+
+# Download NLTK resources
 nltk.download('punkt')
 nltk.download('wordnet')
 nltk.download('omw-1.4')
@@ -12,13 +14,14 @@ nltk.download('omw-1.4')
 app = Flask(__name__)
 lemmatizer = WordNetLemmatizer()
 
+# Define intents and keywords
 intents = {
     "greeting": ["hello", "hi", "hey", "good morning", "good evening"],
     "thanks": ["thanks", "thank you", "thx"],
     "courses": ["Availability of courses"],
     "fee_details": ["Fees structure"],
     "cs": ["BSC(CS)"],
-    "ds": ["BSC(DS)"],
+    "bsc_ds": ["BSC(DS)"],
     "ai": ["BSC(AI)"],
     "mbc": ["BSC(MBC)"],
     "bca": ["BCA"],
@@ -30,16 +33,29 @@ intents = {
     "hostel": ["Hostel facilities"],
     "contact_support": ["Contact details"],
     "address": ["Address"],
-    "default": ["I'm sorry, I didn't understand that. Could you please rephrase?"]
+    "default": []
 }
 
+# Define responses
 responses = {
     "greeting": ["Hello! This is Aditya Degree College for Women's, How can I assist you today?"],
     "thanks": ["You're welcome!"],
     "courses": ["BSC with specializations of DS, AI, CS, BCA(DS), BCA, BBA(GEN), BBA(DM), MBC"],
-    "fee_details": ["It's based on the group you had selected, concession may apply based on your Intermediate %"],
+    "fee_details": ["""
+<table border="1" style="border-collapse: collapse; width:100%; text-align:center;">
+<tr><th>Course</th><th>2025-26 (1st Year)</th><th>2026-27 (2nd Year)</th><th>2027-28 (3rd Year)</th></tr>
+<tr><td>B.Sc (Computers)</td><td>55000</td><td>56000</td><td>57000</td></tr>
+<tr><td>B.Sc (Data Science)</td><td>58000</td><td>59000</td><td>60000</td></tr>
+<tr><td>B.Sc (Artificial Intelligence)</td><td>58000</td><td>59000</td><td>60000</td></tr>
+<tr><td>B.Sc (Microbiology)</td><td>40000</td><td>41000</td><td>42000</td></tr>
+<tr><td>BCA</td><td>62000</td><td>63000</td><td>64000</td></tr>
+<tr><td>BCA (Data Science)</td><td>62000</td><td>63000</td><td>64000</td></tr>
+<tr><td>BBA - DM</td><td>65000</td><td>66000</td><td>67000</td></tr>
+<tr><td>BBA - General</td><td>60000</td><td>61000</td><td>62000</td></tr>
+</table>
+"""],
     "cs": ["1st-55K, 2nd-56K, 3rd-57K"],
-    "ds": ["1st-58k, 2nd-59k, 3rd-60k"],
+    "bsc_ds": ["1st-58k, 2nd-59k, 3rd-60k"],
     "ai": ["1st-58k, 2nd-59k, 3rd-60k"],
     "mbc": ["1st-40k, 2nd-41k, 3rd-42k"],
     "bca": ["1st-62k, 2nd-63k, 3rd-64k"],
@@ -54,17 +70,27 @@ responses = {
     "default": ["I'm sorry, I didn't understand that. Could you please rephrase?"]
 }
 
+# Preprocessing
 def preprocess(sentence):
     tokens = nltk.word_tokenize(sentence.lower())
     return [lemmatizer.lemmatize(word) for word in tokens if word not in string.punctuation]
 
+# Intent prediction
 def predict_intent(user_input):
-    processed = preprocess(user_input)
-    for intent, keywords in intents.items():
-        if any(word in processed for word in preprocess(" ".join(keywords))):
-            return intent
-    return "default"
+    processed_input = preprocess(user_input)
+    best_intent = "default"
+    max_matches = 0
 
+    for intent, keywords in intents.items():
+        keyword_tokens = preprocess(" ".join(keywords))
+        matches = sum(1 for word in processed_input if word in keyword_tokens)
+        if matches > max_matches:
+            max_matches = matches
+            best_intent = intent
+
+    return best_intent
+
+# Flask routes
 @app.route("/")
 def home():
     return render_template("index.html")
@@ -76,6 +102,8 @@ def get_bot_response():
     response = random.choice(responses[intent])
     return jsonify({"response": response})
 
+# Run the app
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    port = int(os.environ.get("PORT", 5000))  # Render sets the PORT env variable
+    app.run(host="0.0.0.0", port=port, debug=True)
+    
