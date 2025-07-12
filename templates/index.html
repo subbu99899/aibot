@@ -7,7 +7,7 @@
 </head>
 <body>
     <div class="chatbox">
-        <h2>🤖 AWDCKKD BOT</h2>
+        <h2>AWDCKKD BOT</h2> <!-- Emoji removed here -->
         <div id="chatlog"></div>
         <div class="overlay"></div>
 
@@ -27,7 +27,7 @@
             const userText = input.value.trim();
             if (!userText) return;
 
-            chatlog.innerHTML += `<p><strong>🧑 You:</strong> ${userText}</p>`;
+            chatlog.innerHTML += `<p><strong>You:</strong> ${userText}</p>`;
             input.value = "";
 
             try {
@@ -40,7 +40,7 @@
                 });
 
                 const data = await response.json();
-                chatlog.innerHTML += `<p><strong>🤖 Bot:</strong> ${data.response}</p>`;
+                chatlog.innerHTML += `<p><strong>Bot:</strong> ${data.response}</p>`; <!-- Emoji removed here -->
                 chatlog.scrollTop = chatlog.scrollHeight;
             } catch (error) {
                 chatlog.innerHTML += `<p style="color:red;"><strong>Error:</strong> Something went wrong.</p>`;
