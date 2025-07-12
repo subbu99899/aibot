@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Aditya Support Bot</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
@@ -9,8 +10,9 @@
         <h2>🤖 AWDCKKD BOT</h2>
         <div id="chatlog"></div>
         <div class="overlay"></div>
+
         <form id="chat-form">
-            <input type="text" id="user-input" autocomplete="off" placeholder="Type your message...">
+            <input type="text" id="user-input" autocomplete="off" placeholder="Type your message..." required>
             <button type="submit">Send</button>
         </form>
     </div>
@@ -18,26 +20,31 @@
     <script>
         const form = document.getElementById("chat-form");
         const chatlog = document.getElementById("chatlog");
+        const input = document.getElementById("user-input");
 
         form.addEventListener("submit", async function(e) {
             e.preventDefault();
-            const userText = document.getElementById("user-input").value;
-            if (userText.trim() === "") return;
+            const userText = input.value.trim();
+            if (!userText) return;
 
-            chatlog.innerHTML += `<p><strong>You:</strong> ${userText}</p>`;
-            document.getElementById("user-input").value = "";
+            chatlog.innerHTML += `<p><strong>🧑 You:</strong> ${userText}</p>`;
+            input.value = "";
 
-            const response = await fetch("/get", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                },
-                body: `msg=${encodeURIComponent(userText)}`
-            });
+            try {
+                const response = await fetch("/get", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                    body: `msg=${encodeURIComponent(userText)}`
+                });
 
-            const data = await response.json();
-            chatlog.innerHTML += `<p><strong>Bot:</strong> ${data.response}</p>`;
-            chatlog.scrollTop = chatlog.scrollHeight;
+                const data = await response.json();
+                chatlog.innerHTML += `<p><strong>🤖 Bot:</strong> ${data.response}</p>`;
+                chatlog.scrollTop = chatlog.scrollHeight;
+            } catch (error) {
+                chatlog.innerHTML += `<p style="color:red;"><strong>Error:</strong> Something went wrong.</p>`;
+            }
         });
     </script>
 </body>
