@@ -89,7 +89,7 @@ responses = {
     "hostel": ["Yes, we offer safe & secure hostel with hygienic food and Wi-Fi. ₹90,000/year."],
     "contact_support": ["Contact: 7036966663, Email: awdckkd@gmail.com"],
     "address": ["Aditya Degree College For Women, Sambamurthy Nagar, Kakinada"],
-    "default": ["For more detail Contact: 7036966663, Email: awdckkd@gmail.com""]
+    "default": ["For more detail Contact: 7036966663, Email: awdckkd@gmail.com"]
 }
 
 # Preprocessing
